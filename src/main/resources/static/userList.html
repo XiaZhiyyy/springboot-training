@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息管理</title>
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    <script src="/js/vue.min.js"></script>
+</head>
+<body>
+<div id="myApp">
+    <button type="button" @click="addPage">跳转新增页面</button>
+    <table>
+        <th>编号</th>
+        <th>用户名</th>
+        <th>密码</th>
+        <th>邮箱</th>
+        <th>操作</th>
+        <tbody>
+        <tr v-for="x in list">
+            <!--{{}}:文本绑定-->
+            <td>{{x.id}}</td>
+            <td>{{x.name}}</td>
+            <td>{{x.password}}</td>
+            <td>{{x.email}}</td>
+            <td>
+                <button type="button" @click="updatePage(x)">跳转修改</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script>
+    new Vue({
+        el:"#myApp",
+        data:{  //定义接收服务器的响应数据集
+            list:[]
+        },
+        mounted(){ //生命周期函数（等同于JavaScript文档加载函数）
+            this.query();
+        },
+        methods:{
+            //跳转用户新增页面
+            addPage(){
+                window.location.href="/userAdd.html"
+            },
+            updatePage(x){ //把选中行的数据传给修改页面
+                localStorage.setItem("userkeyname",JSON.stringify(x));
+                window.location.href="/userUpdate.html";
+            },
+            //查询数据
+            query(){
+                //把vue对象传给变量
+                const self = this;
+                $.ajax({
+                    url:"/user/query",
+                    type:"get",
+                    success:function (rs){
+                        if(rs.code==200){
+                            self.list = rs.data;
+                        }else{
+                            alert(rs.data);
+                        }
+                    }
+                })
+            }
+        }
+
+    })
+</script>
+</html>
